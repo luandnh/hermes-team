@@ -94,8 +94,10 @@ add `--live` only when you want a timed single-agent run for comparison.
   sha, row count) in the child's output schema and check it yourself.
 - **A validator that only re-reads a diff is theatre.** It must run the command.
 - **Never let a child guess a schema.** Paste the real column list into
-  `context`. A child that invents `books.description` when the column is
-  `book.description_text` writes code that runs and returns nothing.
+  `context`. On the FivBuk `book` table, `description`, `page_count`, `series`
+  and `published_year` are NULL for all 50.383 rows — a child that "improves"
+  search by ordering on `published_year` writes code that runs and silently
+  returns nothing.
 - **Disjoint write scope or nothing.** Assign directories, not files, and never
   let two builders touch the same tree.
 - **Fan-out is not free.** kiro-team's own README reports 1.5-2.1x wall-clock

@@ -21,9 +21,12 @@ returns JSON whose `total` is greater than 0 and whose first item has a non-empt
 - **Context the child must be given:**
   - paths: `api/internal/search/`, `api/cmd/server/main.go`, `api/internal/db/`
   - schema: the real column list of `book`, pasted verbatim from the project's
-    DB reference — `id, title, author_name, folder_path, file_name, file_size,
-    format, ...`. The child gets the list; it does not get told to go read a
-    file it might skim.
+    DB reference — `id, title, title_norm, author, authors, format, size_bytes,
+    category, source_path, ...`. The child gets the list; it does not get told
+    to go read a file it might skim. It also gets the NULL map: `description`,
+    `page_count`, `series`, `series_index`, `published_year`, `language` are
+    NULL (or a single default value) for all 50,383 rows, so any query that
+    filters or sorts on them returns nothing.
   - credentials / env: `DATABASE_URL` already exported in the parent shell; the
     child connects as `library_ro`, SELECT only.
   - constraint: no route registration edits outside `api/internal/search/`; the
@@ -39,9 +42,9 @@ returns JSON whose `total` is greater than 0 and whose first item has a non-empt
 - **Context the child must be given:**
   - paths: `web/app/search/`, `web/components/`
   - data shape: the JSON contract, pasted — `{ total: number, items: [{ id,
-    title, author_name }] }`. The child does not infer it from the Go code; two
+    title, author }] }`. The child does not infer it from the Go code; two
     builders racing on a guessed contract is how the page ends up reading
-    `book.author` when the API sends `author_name`.
+    `book.author_name` when the API sends `author`.
   - credentials / env: `API_BASE_URL=http://127.0.0.1:8090`
   - constraint: no changes to `web/app/layout.tsx` or the design tokens.
 - **Acceptance command:** `cd web && npm run build`
